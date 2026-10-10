@@ -1,0 +1,34 @@
+--- stored commands ---
+
+./test-local-then-remote.sh   --remote-ip 54.157.112.128   --workload fractals   --query "w=900&h=900&iterations=1050"
+
+./predict-and-fire.sh   --workload fractals   --query "w=800&h=800&iterations=1430"   --remote-ip 3.227.22.161   --concurrent 5
+
+ssh -i aws/resources/aws_key.pem ec2-user@ec2-3-227-22-161.compute-1.amazonaws.com
+
+./predict-and-fire.sh --workload dna \
+  --query "seq1=seq1:ATGCATGCATGC&seq2=seq2:ATGCATGCATGC&minLength=4" \
+  --remote-ip 54.243.83.95
+
+  (dna worload that returned 502)
+
+--- workflow ---
+
+-> aws/core/create-image.sh
+
+-> /load-balancer/new/launch-deployment-template.sh
+
+-> aws/dynamodb/setup-dynamodb.sh
+
+-> aws/lambda-workloads/install-workload-lambdas.sh
+
+note: on security groups make inbound rule for port 9000
+
+
+--- todo ---
+
+test better lambda invocation cases
+
+test scale down cases
+
+check with pgrep -fa auto-scaler if theres only one auto scaler process
